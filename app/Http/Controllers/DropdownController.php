@@ -10,28 +10,21 @@ class DropdownController extends Controller
 {
     public function index()
     {
-        $divisions = Division::select(['id', 'code as name'])->get();
+        $divisions = Division::select(['id', 'name'])->get();
         return view('dependent-dropdown', compact('divisions'));
     }
 
-    public function getDistricts($divisionCode)
+    public function getDistricts($divisionId)
     {
-
-        $districts = District::select('districts.code as name', 'districts.id')
-            ->join('divisions', 'districts.division_id', '=', 'divisions.id')
-            ->where('divisions.code', $divisionCode)
-            ->get();
-
+        $districts = District::where('division_id', $divisionId)
+            ->get(['id', 'name']);
         return response()->json($districts);
     }
 
-    public function getUpazilas($districtCode)
+    public function getUpazilas($districtId)
     {
-        $upazilas = Upazila::select('upazilas.code as name', 'upazilas.id')
-            ->join('districts', 'upazilas.district_id', '=', 'districts.id')
-            ->where('districts.code', $districtCode)
-            ->get();
-
+        $upazilas = Upazila::where('district_id', $districtId)
+            ->get(['id', 'name']);
         return response()->json($upazilas);
     }
 }
