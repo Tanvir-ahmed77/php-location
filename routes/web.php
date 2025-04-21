@@ -24,3 +24,4 @@ use App\Http\Controllers\DropdownController;
 Route::get('/dependent-dropdown', [DropdownController::class, 'index']);
 Route::get('/get-districts/{division}', [DropdownController::class, 'getDistricts']);
 Route::get('/get-upazilas/{district}', [DropdownController::class, 'getUpazilas']);
+Route::post('/save-location', [DropdownController::class, 'saveLocation']);
