@@ -53,35 +53,39 @@
             <i class="bi bi-save"></i> Save Data
         </button>
     </div>
+    <div id="success-message" style="display:none; color:green;"></div>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
     $(document).ready(function() {
-        const divisionSelect  = $('#division');
-        const districtSelect  = $('#district');
-        const upazilaSelect   = $('#upazila');
-        const divisionLoading = $('#division-loading');
-        const districtLoading = $('#district-loading');
-        const saveBtn         = $('#save-btn');
+        const $divisionSelect = $('#division');
+        const $districtSelect = $('#district');
+        const $upazilaSelect = $('#upazila');
+        const $divisionLoading = $('#division-loading');
+        const $districtLoading = $('#district-loading');
+        const $saveBtn = $('#save-btn');
 
         function updateSaveButton() {
-            if (divisionSelect.val() && districtSelect.val() && upazilaSelect.val())
-                 {saveBtn.prop('disabled', false); }
-            else {saveBtn.prop('disabled', true);  }
+            if ($divisionSelect.val() && $districtSelect.val() && $upazilaSelect.val()) {
+                $saveBtn.prop('disabled', false);
+            } else {
+                $saveBtn.prop('disabled', true);
+            }
         }
 
         // Division change handler
-        divisionSelect.on('change', function() {
+        $divisionSelect.on('change', function() {
             const divisionId = $(this).val();
 
             // Reset dropdowns
-            districtSelect.html('<option value="">Select District</option>').prop('disabled', true);
-            upazilaSelect.html('<option value="">Select Upazila</option>').prop('disabled', true);
+            $districtSelect.html('<option value="">Select District</option>').prop('disabled', true);
+            $upazilaSelect.html('<option value="">Select Upazila</option>').prop('disabled', true);
             updateSaveButton();
 
             if (divisionId) {
-                divisionLoading.show();
+                $divisionLoading.show();
 
                 $.ajax({
                     url: `/get-districts/${divisionId}`,
@@ -92,31 +96,31 @@
                                 value: district.id,
                                 text: district.name
                             })
-                        )g
-                        districtSelect.html('<option value="">Select District</option>').append(options).prop('disabled', false);
+                        );
+                        $districtSelect.html('<option value="">Select District</option>').append(options).prop('disabled', false);
                     },
                     error: function(xhr) {
                         console.error('Error fetching districts:', xhr.responseText);
-                        districtSelect.html('<option value="">Error loading districts</option>');
+                        $districtSelect.html('<option value="">Error loading districts</option>');
                     },
                     complete: function() {
-                        divisionLoading.hide();
+                        $divisionLoading.hide();
                     }
                 });
             } else {
-                divisionLoading.hide();
+                $divisionLoading.hide();
             }
         });
 
         // District change handler
-         districtSelect.on('change', function() {
+        $districtSelect.on('change', function() {
             const districtId = $(this).val();
 
-            upazilaSelect.html('<option value="">Select Upazila</option>').prop('disabled', true);
+            $upazilaSelect.html('<option value="">Select Upazila</option>').prop('disabled', true);
             updateSaveButton();
 
             if (districtId) {
-                districtLoading.show();
+                $districtLoading.show();
 
                 $.ajax({
                     url: `/get-upazilas/${districtId}`,
@@ -128,33 +132,33 @@
                                 text: upazila.name
                             })
                         );
-                        upazilaSelect.html('<option value="">Select Upazila</option>').append(options).prop('disabled', false);
+                        $upazilaSelect.html('<option value="">Select Upazila</option>').append(options).prop('disabled', false);
                     },
                     error: function(xhr) {
                         console.error('Error fetching upazilas:', xhr.responseText);
-                        upazilaSelect.html('<option value="">Error loading upazilas</option>');
+                        $upazilaSelect.html('<option value="">Error loading upazilas</option>');
                     },
                     complete: function() {
-                        districtLoading.hide();
+                        $districtLoading.hide();
                     }
                 });
             } else {
-                districtLoading.hide();
+                $districtLoading.hide();
             }
         });
 
         // Upazila change handler
-         upazilaSelect.on('change', updateSaveButton);
+        $upazilaSelect.on('change', updateSaveButton);
 
         // Save button click handler
-        saveBtn.on('click', function() {
+        $saveBtn.on('click', function() {
             const selectedData = {
-                division_id:   divisionSelect.val(),
-                division_name: divisionSelect.find('option:selected').text(),
-                district_id:   districtSelect.val(),
-                district_name: districtSelect.find('option:selected').text(),
-                upazila_id:    upazilaSelect.val(),
-                upazila_name:  upazilaSelect.find('option:selected').text(),
+                division_id: $divisionSelect.val(),
+                division_name: $divisionSelect.find('option:selected').text(),
+                district_id: $districtSelect.val(),
+                district_name: $districtSelect.find('option:selected').text(),
+                upazila_id: $upazilaSelect.val(),
+                upazila_name: $upazilaSelect.find('option:selected').text()
             };
 
             // Show loading state
@@ -167,8 +171,8 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                success: function(response) {
-                    alert('saved successfully!');
+               success: function(response) {
+                    $('#success-message').text('save successfully').show();
                     // Reset form if needed
                     // $divisionSelect.val('').trigger('change');
                 },
@@ -177,7 +181,7 @@
                     alert('Error saving . Please try again.');
                 },
                 complete: function() {
-                    saveBtn.html('<i class="bi bi-save"></i> Save Data').prop('disabled', false);
+                    $saveBtn.html('<i class="bi bi-save"></i> Save Data').prop('disabled', false);
                     updateSaveButton();
                 }
             });
